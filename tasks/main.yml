@@ -1,0 +1,48 @@
+---
+- name: Download and update cv
+  block:
+
+    - name: Download cv
+      get_url:
+        url: https://download.civicrm.org/cv/cv.phar
+        dest: /root/cv.phar
+        force: true
+        mode: 0600
+
+    - name: Check downloaded version of cv
+      command: php /root/cv.phar --no-ansi --version
+      register: cv_download_version_check
+
+    - name: Set a fact for the downloaded version of cv
+      set_fact:
+        cv_download_version: "{{ cv_download_version_check | regex_replace('^cv version ') | trim }}"
+
+    - name: Stat /usr/local/bin/cv
+      stat:
+        path: /usr/local/bin/cv
+      register: cv_installed_stat
+
+    - name: Check the version of cv that is installed
+      block:
+
+        - name: Installed version of cv
+          command: php /usr/local/bin/cv --no-ansi --version
+          register: cv_installed_version_check
+
+        - name: Set a fact for the installed version of cv
+          set_fact:
+            cv_installed_version: "{{ cv_installed_version_check | regex_replace('^cv version ') | trim }}"
+
+      when: cv_installed_stat.stat.exists
+
+    - name: Install or update cv
+      copy:
+        src: /root/cv.phar
+        dest: /usr/local/bin/cv
+        remote_src: true
+        mode: 0755
+      when: ( not cv_installed_stat.stat.exists ) or ( cv_installed_version is version(cv_download_version, '<') )
+
+  tags:
+    - cv
+...
