@@ -29,7 +29,7 @@
         - name: Installed version of cv
           command: php /usr/local/bin/cv --no-ansi --version
           changed_when: false
-          check_mode: true
+          check_mode: false
           register: cv_installed_version_check
 
         - name: Set a fact for the installed version of cv
