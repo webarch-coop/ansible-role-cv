@@ -11,6 +11,7 @@
 
     - name: Check downloaded version of cv
       command: php /root/cv.phar --no-ansi --version
+      check_mode: true
       register: cv_download_version_check
 
     - name: Set a fact for the downloaded version of cv
@@ -27,6 +28,8 @@
 
         - name: Installed version of cv
           command: php /usr/local/bin/cv --no-ansi --version
+          changed_when: false
+          check_mode: true
           register: cv_installed_version_check
 
         - name: Set a fact for the installed version of cv
