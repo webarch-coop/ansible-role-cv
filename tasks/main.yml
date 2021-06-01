@@ -15,7 +15,7 @@
 
     - name: Set a fact for the downloaded version of cv
       set_fact:
-        cv_download_version: "{{ cv_download_version_check | regex_replace('^cv version ') | trim }}"
+        cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version ') | trim }}"
 
     - name: Stat /usr/local/bin/cv
       stat:
@@ -31,7 +31,7 @@
 
         - name: Set a fact for the installed version of cv
           set_fact:
-            cv_installed_version: "{{ cv_installed_version_check | regex_replace('^cv version ') | trim }}"
+            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version ') | trim }}"
 
       when: cv_installed_stat.stat.exists
 
