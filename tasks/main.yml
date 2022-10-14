@@ -29,7 +29,7 @@
           ansible.builtin.set_fact:
             cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version ') | trim }}"
 
-      when: (cv_download is defiend) and (cv_download.stat.exists | bool)
+      when: (cv_download is defined) and (cv_download.stat.exists | bool)
 
     - name: Stat the path to cv
       ansible.builtin.stat:
