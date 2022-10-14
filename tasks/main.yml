@@ -3,50 +3,66 @@
   block:
 
     - name: Download cv
-      get_url:
+      ansible.builtin.get_url:
         url: https://download.civicrm.org/cv/cv.phar
-        dest: /root/cv.phar
+        dest: "{{ cv_download_dir }}/cv.phar"
         force: true
         mode: 0600
+        owner: "{{ cv_owner }}"
+        group: "{{ cv_group }}"
 
-    - name: Check downloaded version of cv
-      command: php /root/cv.phar --no-ansi --version
-      check_mode: false
-      changed_when: false
-      register: cv_download_version_check
+    - name: Check if a downloaded version of cv exists
+      ansible.builtin.stat:
+        path: "{{ cv_download_dir }}/cv.phar"
+      register: cv_download
 
-    - name: Set a fact for the downloaded version of cv
-      set_fact:
-        cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version ') | trim }}"
+    - name: Check the downloaded version of cv when it exists
+      block:
 
-    - name: Stat /usr/local/bin/cv
-      stat:
-        path: /usr/local/bin/cv
-      register: cv_installed_stat
+        - name: Check downloaded version of cv
+          ansible.builtin.command: "php {{ cv_download_dir }}/cv.phar --no-ansi --version"
+          check_mode: false
+          changed_when: false
+          register: cv_download_version_check
+
+        - name: Set a fact for the downloaded version of cv
+          ansible.builtin.set_fact:
+            cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version ') | trim }}"
+
+      when: (cv_download is defiend) and (cv_download.stat.exists | bool)
+
+    - name: Stat the path to cv
+      ansible.builtin.stat:
+        path: "{{ cv_bin }}/cv"
+      register: cv_installed
 
     - name: Check the version of cv that is installed
       block:
 
         - name: Installed version of cv
-          command: php /usr/local/bin/cv --no-ansi --version
+          ansible.builtin.command: "php {{ cv_bin }}/cv --no-ansi --version"
           check_mode: false
           changed_when: false
           register: cv_installed_version_check
 
         - name: Set a fact for the installed version of cv
-          set_fact:
+          ansible.builtin.set_fact:
             cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version ') | trim }}"
 
-      when: cv_installed_stat.stat.exists
+      when: cv_installed.stat.exists
 
     - name: Install or update cv
-      copy:
-        src: /root/cv.phar
-        dest: /usr/local/bin/cv
+      ansible.builtin.copy:
+        src: "{{ cv_download_dir }}/cv.phar"
+        dest: "{{ cv_bin }}/cv"
         remote_src: true
+        verify: "%s --no-ansi --version"
         mode: 0755
-      when: ( not cv_installed_stat.stat.exists ) or ( cv_installed_version is version(cv_download_version, '<') )
+        owner: "{{ cv_owner }}"
+        group: "{{ cv_group }}"
+      when: (not cv_installed.stat.exists | bool) or (cv_download_version is defined and cv_installed_version is defined and cv_installed_version is version(cv_download_version, '<'))
 
+  when: cv | bool
   tags:
     - cv
 ...
