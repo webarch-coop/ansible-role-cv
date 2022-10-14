@@ -49,7 +49,7 @@
           ansible.builtin.set_fact:
             cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
 
-      when: cv_installed.stat.exists
+      when: (cv_installed is defined) and (cv_installed.stat.exists | bool)
 
     - name: Install or update cv
       ansible.builtin.copy:
