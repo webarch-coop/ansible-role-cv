@@ -27,7 +27,7 @@
 
         - name: Set a fact for the downloaded version of cv
           ansible.builtin.set_fact:
-            cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version v') | regex_replace('-.*$') | trim }}"
+            cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
 
       when: (cv_download is defined) and (cv_download.stat.exists | bool)
 
@@ -47,7 +47,7 @@
 
         - name: Set a fact for the installed version of cv
           ansible.builtin.set_fact:
-            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('-.*$') | trim }}"
+            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
 
       when: cv_installed.stat.exists
 
