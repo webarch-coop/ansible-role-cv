@@ -3,7 +3,7 @@ galaxy_info:
   role_name: cv
   author: Chris Croome
   namespace: chriscroome
-  description: Ansible role for installing and updating cv.
+  description: Ansible role for installing and updating cv, the CiviCRM command line interface.
   company: Webarchitects Co-operative
   license: GNU General Public License v3.0 (GPLv3)
   min_ansible_version: 2.11
