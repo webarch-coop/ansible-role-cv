@@ -1,4 +1,4 @@
-# cv
+# Webarchitects cv Ansible role
 
 [![pipeline status](https://git.coop/webarch/cv/badges/master/pipeline.svg)](https://git.coop/webarch/cv/-/commits/master)
 
