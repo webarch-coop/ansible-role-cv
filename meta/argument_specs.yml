@@ -22,14 +22,34 @@ argument_specs:
         type: str
         required: true
         description: The directory into which cv will be installed.
+      cv_download:
+        type: dict
+        required: false
+        description: An internal variables for the results of statting the downloaded cv.phar file.
       cv_download_dir:
         type: str
         required: true
         description: The directory used for downloading files.
+      cv_download_version:
+        type: str
+        required: false
+        description: An internal variable for the version of cv that has been downloaded.
+      cv_download_version_check:
+        type: dict
+        required: false
+        description: An internal variable for the results of checking the downloaded version of cv.phar.
       cv_group:
         type: str
         required: true
         description: The group for the cv files.
+      cv_installed:
+        type: str
+        required: false
+        description: An internal variable for the version of cv that is installed.
+      cv_installed_version_check:
+        type: dict
+        required: false
+        description: An internal variable for the results of checking the installed version of cv.phar.
       cv_owner:
         type: str
         required: true
