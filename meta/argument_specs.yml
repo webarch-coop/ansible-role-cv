@@ -34,4 +34,8 @@ argument_specs:
         type: str
         required: true
         description: The owner of the cv files.
+      cv_verify:
+        type: bool
+        required: true
+        description: Verify the variables that start with cv_.
 ...

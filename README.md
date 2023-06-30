@@ -15,6 +15,9 @@ There are five [default variables](defaults/main.yml), set `cv` to `true` for th
 | `cv_download_dir`        | `/root`                  | The directory used for downloading files.      |
 | `cv_owner`               | `root`                   | The owner of the cv files.                     |
 | `cv_group`               | `"{{ cv_owner }}"`       | The group for the cv files.                    |
+| `cv_verify`              | `true`                   | Verify the variables that start with `cv_`     |
+
+See also the [meta/argument_specs.yml](meta/argument_specs.yml) for all the variables this role uses, including the internal ones.
 
 ## Repository
 

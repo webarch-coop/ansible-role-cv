@@ -13,4 +13,5 @@ cv_bin: /usr/local/bin
 cv_download_dir: /root
 cv_group: "{{ cv_owner }}"
 cv_owner: root
+cv_verify: true
 ...
