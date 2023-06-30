@@ -13,20 +13,20 @@
 
     - name: Debug the hostvars variable names that start with cv_
       ansible.builtin.debug:
-        var: wpclivarnames
+        var: cvvarnames
         verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
 
     - name: Debug the hostvars variable names that start with cv_
       ansible.builtin.debug:
-        var: wpclihostvars
+        var: cvhostvars
         verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
 
     - name: Check cv_ variables using meta/argument_specs.yml
       ansible.builtin.validate_argument_spec:
         argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
-        provided_arguments: "{{ wpclihostvars }}"
+        provided_arguments: "{{ cvhostvars }}"
 
   when: cv_verify | bool
   tags:
-    - wpcli
+    - cv
 ...
