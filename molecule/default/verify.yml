@@ -44,7 +44,7 @@
 
     - name: Set facts for the cv versions
       ansible.builtin.set_fact:
-        molecule_cv_root_versions: "{{ molecule_cv_v | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+        molecule_cv_root_versions: "{{ molecule_cv_v | community.general.json_query('results[].{path: molecule_cv_path, version: stdout_lines[0]}') }}"
 
     - name: Debug cv versions
       ansible.builtin.debug:
@@ -86,7 +86,7 @@
 
     - name: Set facts for the cv versions
       ansible.builtin.set_fact:
-        molecule_cv_user_versions: "{{ molecule_cv_v | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+        molecule_cv_root_versions: "{{ molecule_cv_v | community.general.json_query('results[].{path: molecule_cv_path, version: stdout_lines[0]}') }}"
 
     - name: Debug cv versions
       ansible.builtin.debug:
