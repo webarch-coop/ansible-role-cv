@@ -63,6 +63,8 @@
         mode: "0600"
         owner: "{{ cv_owner }}"
         group: "{{ cv_group }}"
+      check_mode: false
+      changed_when: false
 
     - name: Check if a downloaded version of cv exists
       ansible.builtin.stat:
