@@ -8,18 +8,25 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-extends: default
-yaml-files:
-  - '*.yaml'
-  - '*.yml'
-rules:
-  braces:
-    max-spaces-inside: 1
-    level: error
-  brackets:
-    max-spaces-inside: 1
-    level: error
-  line-length: disable
-  comments-indentation: disable
-# vim: syntax=yaml
+- name: Verify cv variables
+  block:
+
+    - name: Debug the hostvars variable names that start with cv_
+      ansible.builtin.debug:
+        var: wpclivarnames
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Debug the hostvars variable names that start with cv_
+      ansible.builtin.debug:
+        var: wpclihostvars
+        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+
+    - name: Check cv_ variables using meta/argument_specs.yml
+      ansible.builtin.validate_argument_spec:
+        argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
+        provided_arguments: "{{ wpclihostvars }}"
+
+  when: cv_verify | bool
+  tags:
+    - wpcli
 ...

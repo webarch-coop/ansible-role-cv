@@ -8,18 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-extends: default
-yaml-files:
-  - '*.yaml'
-  - '*.yml'
-rules:
-  braces:
-    max-spaces-inside: 1
-    level: error
-  brackets:
-    max-spaces-inside: 1
-    level: error
-  line-length: disable
-  comments-indentation: disable
-# vim: syntax=yaml
+# https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
+cvvarnames: "{{ q('varnames', '^cv_') | sort }}"
+cvhostvars: "{{ dict(cvvarnames | list | zip(q('vars', *cvvarnames))) }}"
 ...

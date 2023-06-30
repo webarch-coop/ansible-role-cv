@@ -1,0 +1,94 @@
+# Copyright 2021-2023 Chris Croome
+#
+# This file is part of the Webarchitects cv, the CiviCRM command line interface Ansible role.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Verify as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Run which cv
+      ansible.builtin.command: which cv
+      check_mode: false
+      changed_when: false
+      register: molecule_root_which_cv
+
+    - name: Debug which cv
+      ansible.builtin.debug:
+        var: molecule_root_which_cv.stdout
+
+    - name: Run which cv -a
+      ansible.builtin.command: which cv -a
+      check_mode: false
+      changed_when: false
+      register: molecule_root_which_cv_a
+      failed_when: molecule_root_which_cv_a.rc is not regex('^0|1$')
+
+    - name: Check cv versions
+      ansible.builtin.command: "{{ molecule_cv_path }} --version --no-ansi --no-interaction"
+      check_mode: false
+      changed_when: false
+      register: molecule_cv_v
+      loop: "{{ molecule_root_which_cv_a.stdout_lines }}"
+      loop_control:
+        loop_var: molecule_cv_path
+
+    - name: Set facts for the cv versions
+      ansible.builtin.set_fact:
+        molecule_cv_root_versions: "{{ molecule_cv_v | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+
+    - name: Debug cv versions
+      ansible.builtin.debug:
+        var: molecule_cv_root_versions
+
+- name: Verify as user
+  become: false
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Run which cv
+      ansible.builtin.command: which cv
+      check_mode: false
+      changed_when: false
+      register: molecule_user_which_cv
+
+    - name: Debug which cv
+      ansible.builtin.debug:
+        var: molecule_user_which_cv.stdout
+
+    - name: Run which cv -a
+      ansible.builtin.command: which cv -a
+      check_mode: false
+      changed_when: false
+      register: molecule_user_which_cv_a
+      failed_when: molecule_user_which_cv_a.rc is not regex('^0|1$')
+
+    - name: Check cv versions
+      ansible.builtin.command: "{{ molecule_cv_path }} --version --no-ansi --no-interaction"
+      check_mode: false
+      changed_when: false
+      register: molecule_cv_v
+      loop: "{{ molecule_user_which_cv_a.stdout_lines }}"
+      loop_control:
+        loop_var: molecule_cv_path
+
+    - name: Set facts for the cv versions
+      ansible.builtin.set_fact:
+        molecule_cv_user_versions: "{{ molecule_cv_v | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+
+    - name: Debug cv versions
+      ansible.builtin.debug:
+        var: molecule_cv_user_versions
+...

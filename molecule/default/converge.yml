@@ -1,0 +1,82 @@
+# Copyright 2021-2023 Chris Croome
+#
+# This file is part of the Webarchitects cv, the CiviCRM command line interface Ansible role.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Install requirements as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Required packages present
+      ansible.builtin.apt:
+        pkg:
+          - php-cli
+        update-cache: true
+        state: present
+
+- name: Run as user
+  become: false
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
+
+    - name: Debug ansible_user_id
+      ansible.builtin.debug:
+        var: ansible_user_id
+
+    - name: Debug ansible_user_dir
+      ansible.builtin.debug:
+        var: ansible_user_dir
+
+    - name: Include cv role as user
+      ansible.builtin.include_role:
+        name: cv
+      vars:  # noqa var-naming[no-role-prefix]
+        cv: true
+        cv_bin: "{{ ansible_user_dir }}/.local/bin"
+        cv_download_dir: /tmp
+        cv_group: "{{ ansible_user_id }}"
+        cv_owner: "{{ ansible_user_id }}"
+
+- name: Run as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
+
+    - name: Debug ansible_user_id
+      ansible.builtin.debug:
+        var: ansible_user_id
+
+    - name: Debug ansible_user_dir
+      ansible.builtin.debug:
+        var: ansible_user_dir
+
+    - name: Include cv role as root
+      ansible.builtin.include_role:
+        name: cv
+      vars:  # noqa var-naming[no-role-prefix]
+        cv: true
+
+...

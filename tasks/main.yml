@@ -1,13 +1,62 @@
+# Copyright 2021-2023 Chris Croome
+#
+# This file is part of the Webarchitects cv, the CiviCRM command line interface Ansible role.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects cv, the CiviCRM command line interface Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+- name: Skip the tasks in this role as cv is false
+  ansible.builtin.debug:
+    msg: "The cv variable need to be true for the tasks in this role to run."
+  when: not cv | bool
+  tags:
+    - cv
+
 - name: Download and update cv
   block:
+
+    - name: Include cv verify variables tasks
+      ansible.builtin.include_tasks: verify.yml
+      when: cv_verify | bool
+
+    - name: Packages present when root
+      ansible.builtin.apt:
+        pkg: "{{ cv_pkgs_present }}"
+        update-cache: true
+        state: present
+      when: ansible_effective_user_id == 0
+
+    - name: Check packages when not root
+      block:
+
+        - name: Read package facts
+          ansible.builtin.package_facts:
+            manager: apt
+
+        - name: Check the presence of the required packages
+          ansible.builtin.assert:
+            that:
+              - cv_pkg in ansible_facts.packages.keys()
+            fail_msg:
+              - "The {{ cv_pkg }} is required"
+              - "You can install all the requirements using:"
+              - "sudo apt install{% for cv_pkg_missing in cv_pkgs_present %} {{ cv_pkg_missing }}{% endfor %}"
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+          loop: "{{ cv_pkgs_present }}"
+          loop_control:
+            loop_var: cv_pkg
+
+      when: ansible_effective_user_id != 0
 
     - name: Download cv
       ansible.builtin.get_url:
         url: https://download.civicrm.org/cv/cv.phar
         dest: "{{ cv_download_dir }}/cv.phar"
         force: true
-        mode: 0600
+        mode: "0600"
         owner: "{{ cv_owner }}"
         group: "{{ cv_group }}"
 
@@ -57,7 +106,7 @@
         dest: "{{ cv_bin }}/cv"
         remote_src: true
         validate: "%s --no-ansi --version"
-        mode: 0755
+        mode: "0755"
         owner: "{{ cv_owner }}"
         group: "{{ cv_group }}"
       when: (not cv_installed.stat.exists | bool) or (cv_download_version is defined and cv_installed_version is defined and cv_installed_version is version(cv_download_version, '<'))
