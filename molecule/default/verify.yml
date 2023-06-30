@@ -18,6 +18,8 @@
 
     - name: Run which cv
       ansible.builtin.command: which cv
+      environment:
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_root_which_cv
@@ -28,6 +30,8 @@
 
     - name: Run which cv -a
       ansible.builtin.command: which cv -a
+      environment:
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_root_which_cv_a
@@ -60,6 +64,8 @@
 
     - name: Run which cv
       ansible.builtin.command: which cv
+      environment:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_user_which_cv
@@ -70,6 +76,8 @@
 
     - name: Run which cv -a
       ansible.builtin.command: which cv -a
+      environment:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_user_which_cv_a
