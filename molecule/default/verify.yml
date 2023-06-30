@@ -19,7 +19,7 @@
     - name: Run which cv
       ansible.builtin.command: which cv
       environment:
-        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_root_which_cv
@@ -31,7 +31,7 @@
     - name: Run which cv -a
       ansible.builtin.command: which cv -a
       environment:
-        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       check_mode: false
       changed_when: false
       register: molecule_root_which_cv_a
@@ -65,7 +65,7 @@
     - name: Run which cv
       ansible.builtin.command: which cv
       environment:
-        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_user_which_cv
@@ -77,7 +77,7 @@
     - name: Run which cv -a
       ansible.builtin.command: which cv -a
       environment:
-        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_user_which_cv_a
@@ -85,6 +85,8 @@
 
     - name: Check cv versions
       ansible.builtin.command: "{{ molecule_cv_path }} --version --no-ansi --no-interaction"
+      environment:
+        PATH: "{{ ansible_user_dir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
       check_mode: false
       changed_when: false
       register: molecule_cv_v
@@ -94,7 +96,7 @@
 
     - name: Set facts for the cv versions
       ansible.builtin.set_fact:
-        molecule_cv_root_versions: "{{ molecule_cv_v | community.general.json_query('results[].{path: molecule_cv_path, version: stdout_lines[0]}') }}"
+        molecule_cv_user_versions: "{{ molecule_cv_v | community.general.json_query('results[].{path: molecule_cv_path, version: stdout_lines[0]}') }}"
 
     - name: Debug cv versions
       ansible.builtin.debug:
