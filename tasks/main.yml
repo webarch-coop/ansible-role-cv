@@ -27,7 +27,9 @@
         pkg: "{{ cv_pkgs_present }}"
         update-cache: true
         state: present
-      when: ansible_effective_user_id == 0
+      when:
+        - ansible_effective_user_id == 0
+        - cv_pkgs_present != []
 
     - name: Check packages when not root
       block:
@@ -49,7 +51,9 @@
           loop_control:
             loop_var: cv_pkg
 
-      when: ansible_effective_user_id != 0
+      when:
+        - ansible_effective_user_id != 0
+        - cv_pkgs_present != []
 
     - name: Download cv
       ansible.builtin.get_url:

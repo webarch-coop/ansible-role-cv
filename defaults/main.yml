@@ -13,5 +13,7 @@ cv_bin: /usr/local/bin
 cv_download_dir: /root
 cv_group: "{{ cv_owner }}"
 cv_owner: root
+cv_pkgs_present:
+  - php-cli
 cv_verify: true
 ...

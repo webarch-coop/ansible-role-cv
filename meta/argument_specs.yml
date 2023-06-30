@@ -34,6 +34,11 @@ argument_specs:
         type: str
         required: true
         description: The owner of the cv files.
+      cv_pkgs_present:
+        type: list
+        elements: str
+        required: true
+        description: A list of required packages.
       cv_verify:
         type: bool
         required: true
