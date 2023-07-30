@@ -9,6 +9,7 @@
 # You should have received a copy of the GNU General Public License along with the Webarchitects cv, the CiviCRM command line interface Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 cv: false
+cv_bash_completion_dir: /etc/bash_completion.d
 cv_bin: /usr/local/bin
 cv_download_dir: /root
 cv_group: "{{ cv_owner }}"

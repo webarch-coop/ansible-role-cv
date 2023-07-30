@@ -117,6 +117,28 @@
         group: "{{ cv_group }}"
       when: (not cv_installed.stat.exists | bool) or (cv_download_version is defined and cv_installed_version is defined and cv_installed_version is version(cv_download_version, '<'))
 
+        - name: Bash completion directory present
+          ansible.builtin.file:
+            path: "{{ cv_bash_completion_dir }}"
+            state: directory
+            owner: "{{ cv_owner }}"
+            group: "{{ cv_group }}"
+            mode: "0755"
+
+    - name: Generate Bash completion
+      ansible.builtin.shell: "{{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_completion.sh"
+      check_mode: false
+      changed_when: false
+      register: cv_bash_completion
+
+    - name: Bash completion in place
+      ansible.builtin.copy:
+        src: "{{ cv_download_dir }}/cv_completion.sh"
+        dest: "{{ cv_bash_completion_dir }}/cv"
+        owner: "{{ cv_owner }}"
+        group: "{{ cv_group }}"
+        mode: "0755"
+
   when: cv | bool
   tags:
     - cv
