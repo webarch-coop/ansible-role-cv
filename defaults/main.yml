@@ -15,6 +15,7 @@ cv_download_dir: /root
 cv_group: "{{ cv_owner }}"
 cv_owner: root
 cv_pkgs_present:
+  - bash-completion
   - php-cli
 cv_verify: true
 ...

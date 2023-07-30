@@ -19,6 +19,7 @@
     - name: Required packages present
       ansible.builtin.apt:
         pkg:
+          - bash-completion
           - php-cli
         update-cache: true
         state: present
@@ -48,6 +49,7 @@
         name: cv
       vars:  # noqa var-naming[no-role-prefix]
         cv: true
+        cv_bash_completion_dir: "{{ ansible_user_dir }}/.bash_completion.d"
         cv_bin: "{{ ansible_user_dir }}/.local/bin"
         cv_download_dir: /tmp
         cv_group: "{{ ansible_user_id }}"
