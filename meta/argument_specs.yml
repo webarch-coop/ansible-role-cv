@@ -18,6 +18,10 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role.
+      cv_bash:
+        type: str
+        required: false
+        description: An internal variable for the path to Bash.
       cv_bash_completion_dir:
         type: str
         required: true
@@ -71,4 +75,8 @@ argument_specs:
         type: bool
         required: true
         description: Verify the variables that start with cv_.
+      cv_which_bash:
+        type: dict
+        required: false
+        description: An internal variable for the result of which bash.
 ...

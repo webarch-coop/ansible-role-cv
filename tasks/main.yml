@@ -146,7 +146,6 @@
         SHELL: "{{ cv_bash }}"
       check_mode: false
       changed_when: false
-      register: cv_bash_completion
 
     - name: Bash completion in place
       ansible.builtin.copy:
