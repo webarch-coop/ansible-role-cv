@@ -117,6 +117,17 @@
         group: "{{ cv_group }}"
       when: (not cv_installed.stat.exists | bool) or (cv_download_version is defined and cv_installed_version is defined and cv_installed_version is version(cv_download_version, '<'))
 
+    - name: Run which bash
+      command: which bash
+      check_mode: false
+      changed_when: false
+      register: cv_which_bash
+      failed_when: which_bash.stdout is not regex('\/bash$')
+
+    - name: Set a variable for the path to Bash
+      set_fact:
+        cv_bash: "{{ which_bash.stdout }}"
+
     - name: Bash completion directory present
       ansible.builtin.file:
         path: "{{ cv_bash_completion_dir }}"
@@ -126,7 +137,11 @@
         mode: "0755"
 
     - name: Generate Bash completion
-      ansible.builtin.shell: "{{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_bash_completion.sh"
+      ansible.builtin.shell: |-
+        set -e -o pipefail
+        {{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_bash_completion.sh"
+      args:
+        executable: "{{ cv_bash }}"
       check_mode: false
       changed_when: false
       register: cv_bash_completion
