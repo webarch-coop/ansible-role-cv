@@ -139,7 +139,7 @@
     - name: Generate Bash completion
       ansible.builtin.shell: |-
         set -e -o pipefail
-        {{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_bash_completion.sh"
+        {{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_bash_completion.sh
       args:
         executable: "{{ cv_bash }}"
       check_mode: false
