@@ -142,6 +142,8 @@
         {{ cv_bin }}/cv _completion --generate-hook > {{ cv_download_dir }}/cv_bash_completion.sh
       args:
         executable: "{{ cv_bash }}"
+      env:
+        SHELL: "{{ cv_bash }}"
       check_mode: false
       changed_when: false
       register: cv_bash_completion
