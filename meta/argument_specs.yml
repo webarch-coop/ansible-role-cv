@@ -18,6 +18,10 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role.
+      cv_bash_completion_dir:
+        type: str
+        required: true
+        description: The directory into which cv Bash completion will be installed.
       cv_bin:
         type: str
         required: true
