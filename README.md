@@ -6,7 +6,7 @@ This repository contains an Ansible role to install and update [cv, the CiviCRM 
 
 ## Role Variables
 
-There are eight [default variables](defaults/main.yml), set `cv` to `true` for the tasks in this role to be run, it defaults to `false`, the other variables should only need changing if this role isn't run as `root` and you wish to install cv into a users `~/hom/bin`, `cv_bin` and `cv_download_dir` directories need to be writable by the `cv_owner`:
+There are eight [default variables](defaults/main.yml), set `cv` to `true` for the tasks in this role to be run, it defaults to `false`, the other variables should only need changing if this role isn't run as `root` and you wish to install cv into a users `~/hom/bin`, `cv_bin`, `cv_bash_completion_dir` and `cv_download_dir` directories need to be writable by the `cv_owner`:
 
 | Variable name            | Default value               | Comment                                        |
 |--------------------------|-----------------------------|------------------------------------------------|
