@@ -28,7 +28,7 @@
         update-cache: true
         state: present
       when:
-        - ansible_effective_user_id == 0
+        - ansible_facts.effective_user_id == 0
         - cv_pkgs_present != []
 
     - name: Check packages when not root
@@ -52,7 +52,7 @@
             loop_var: cv_pkg
 
       when:
-        - ansible_effective_user_id != 0
+        - ansible_facts.effective_user_id != 0
         - cv_pkgs_present != []
 
     - name: Download cv

@@ -22,10 +22,11 @@ galaxy_info:
         - bookworm
         - bullseye
         - buster
-    - name: ubuntu
+    - name: Ubuntu
       versions:
         - jammy
         - focal
+        - noble
   galaxy_tags:
     - cv
     - civicrm
