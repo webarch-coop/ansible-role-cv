@@ -84,10 +84,22 @@
           ansible.builtin.set_fact:
             cv_download_version: >-
               {{ cv_download_version_check.stdout |
-              ansible.builtin.regex_replace('^cv[ ]') |
-              ansible.builtin.regex_replace('^v[ ]') |
-              ansible.builtin.regex_replace('^version[ ]') |
-              regex_replace('-.*$') | trim | string }}
+              ansible.builtin.regex_replace('^cv[ ]?') |
+              ansible.builtin.regex_replace('^v[ ]?') |
+              ansible.builtin.regex_replace('^version[ ]?') |
+              ansible.builtin.regex_replace('-.*$') | trim | string }}
+
+        - name: Debug cv_download_version
+          ansible.builtin.debug:
+            var: cv_download_version
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+          when: cv_download_version is defined
+
+        - name: Debug cv_download_version type
+          ansible.builtin.debug:
+            msg: "{{ cv_download_version | ansible.builtin.type_debug }}"
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+          when: cv_download_version is defined
 
       when: (cv_download is defined) and (cv_download.stat.exists | bool)
 
@@ -107,33 +119,26 @@
 
         - name: Set a fact for the installed version of cv
           ansible.builtin.set_fact:
-            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim | string }}"
+            cv_installed_version: >-
+              {{ cv_installed_version_check.stdout |
+              ansible.builtin.regex_replace('^cv[ ]?') |
+              ansible.builtin.regex_replace('^v[ ]?') |
+              ansible.builtin.regex_replace('^version[ ]?') |
+              ansible.builtin.regex_replace('-.*$') | trim | string }}
+
+        - name: Debug cv_installed_version
+          ansible.builtin.debug:
+            var: cv_installed_version
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+          when: cv_installed_version is defined
+
+        - name: Debug cv_installed_version type
+          ansible.builtin.debug:
+            msg: "{{ cv_installed_version | ansible.builtin.type_debug }}"
+            verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
+          when: cv_installed_version is defined
 
       when: (cv_installed is defined) and (cv_installed.stat.exists | bool)
-
-    - name: Debug cv_installed_version
-      ansible.builtin.debug:
-        var: cv_installed_version
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
-      when: cv_installed_version is defined
-
-    - name: Debug cv_installed_version type
-      ansible.builtin.debug:
-        msg: "{{ cv_installed_version | ansible.builtin.type_debug }}"
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
-      when: cv_installed_version is defined
-
-    - name: Debug cv_download_version
-      ansible.builtin.debug:
-        var: cv_download_version
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
-      when: cv_download_version is defined
-
-    - name: Debug cv_download_version type
-      ansible.builtin.debug:
-        msg: "{{ cv_download_version | ansible.builtin.type_debug }}"
-        verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}0{% else %}1{% endif %}"
-      when: cv_download_version is defined
 
     - name: Install or update cv
       ansible.builtin.copy:
