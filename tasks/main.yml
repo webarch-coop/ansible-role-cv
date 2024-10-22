@@ -82,7 +82,7 @@
 
         - name: Set a fact for the downloaded version of cv
           ansible.builtin.set_fact:
-            cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+            cv_download_version: "{{ cv_download_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim | string }}"
 
       when: (cv_download is defined) and (cv_download.stat.exists | bool)
 
@@ -102,9 +102,29 @@
 
         - name: Set a fact for the installed version of cv
           ansible.builtin.set_fact:
-            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim }}"
+            cv_installed_version: "{{ cv_installed_version_check.stdout | regex_replace('^cv version v') | regex_replace('^cv v') | regex_replace('-.*$') | trim | string }}"
 
       when: (cv_installed is defined) and (cv_installed.stat.exists | bool)
+
+    - name: Debug cv_installed_version
+      ansible.builtin.debug:
+        var: cv_installed_version
+      when: cv_installed_version is defined
+
+    - name: Debug cv_installed_version type
+      ansible.builtin.debug:
+        msg: "{{ cv_installed_version | ansible.builtin.type_debug }}"
+      when: cv_installed_version is defined
+
+    - name: Debug cv_download_version
+      ansible.builtin.debug:
+        var: cv_download_version
+      when: cv_download_version is defined
+
+    - name: Debug cv_download_version type
+      ansible.builtin.debug:
+        msg: "{{ cv_download_version | ansible.builtin.type_debug }}"
+      when: cv_download_version is defined
 
     - name: Install or update cv
       ansible.builtin.copy:
@@ -115,7 +135,11 @@
         mode: "0755"
         owner: "{{ cv_owner }}"
         group: "{{ cv_group }}"
-      when: (not cv_installed.stat.exists | bool) or (cv_download_version is defined and cv_installed_version is defined and cv_installed_version is version(cv_download_version, '<'))
+      when: >-
+        (not cv_installed.stat.exists | bool) or
+        ((cv_download_version is defined) and
+        (cv_installed_version is defined) and
+        (cv_installed_version is version(cv_download_version, '<')))
 
     - name: Run which bash
       ansible.builtin.command: which bash
