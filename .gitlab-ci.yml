@@ -1,4 +1,4 @@
-# Copyright 2021-2024 Chris Croome
+# Copyright 2021-2025 Chris Croome
 #
 # This file is part of the Webarchitects cv, the CiviCRM command line interface Ansible role.
 #
@@ -18,20 +18,21 @@ variables:
   ANSIBLE_INJECT_FACT_VARS: "0"
   ANSIBLE_NOCOWS: "1"
   ANSIBLE_REMOTE_TMP: "/tmp"
+  ANSIBLE_ROLES_PATH: "${CI_PROJECT_DIR}/..:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles"
   ANSIBLE_SHELL_ALLOW_WORLD_READABLE_TEMP: "1"
   DEBIAN_FRONTEND: "noninteractive"
   DEFAULT_MANAGED_STR: "Ansible managed"
-  GIT_STRATEGY: none
+  # GIT_STRATEGY: none
   MOLECULE_VERBOSITY: "0"
   PRE_COMMIT_COLOR: always
   PY_COLORS: "1"
 before_script:
   - cd
   - source ~/.profile
-  - mkdir -p builds/${CI_PROJECT_ROOT_NAMESPACE}
-  - cd builds/${CI_PROJECT_ROOT_NAMESPACE}
-  - git clone ${CI_PROJECT_URL}.git
-  - cd ${CI_PROJECT_NAME}
+  # - mkdir -p builds/${CI_PROJECT_ROOT_NAMESPACE}
+  # - cd builds/${CI_PROJECT_ROOT_NAMESPACE}
+  # - git clone ${CI_PROJECT_URL}.git
+  # - cd ${CI_PROJECT_NAME}
   - cat /etc/debian_version
   - which ansible
   - ansible --version
@@ -45,28 +46,28 @@ stages:
   - trixie
   - noble
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20241008
+  image: registry.git.coop/webarch/containers/images/bookworm:20250113
   stage: bookworm
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 jammy:
-  image: registry.git.coop/webarch/containers/images/jammy:20241008
+  image: registry.git.coop/webarch/containers/images/jammy:20250113
   stage: jammy
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20241008
+  image: registry.git.coop/webarch/containers/images/trixie:20250113
   stage: trixie
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 noble:
-  image: registry.git.coop/webarch/containers/images/noble:20241008
+  image: registry.git.coop/webarch/containers/images/noble:20250113
   stage: noble
   script:
     - pre-commit install
